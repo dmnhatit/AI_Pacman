@@ -26,5 +26,5 @@ class EPosition(Enum):
 
 
 class EScore(Enum):
-    TARGET = 100
-    STEP = -1
+    TARGET = 500
+    STEP = -5
