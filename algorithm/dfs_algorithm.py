@@ -23,6 +23,7 @@ class Node:
             node = node.parent
         return total_cost
     
+    
     def get_directions(self):
         path = self.get_path()
         directions = []
@@ -110,24 +111,50 @@ def dfs(problem):
         return start_node
     frontier = [start_node]
     explored = set()
+    explored.add(start_node.state)
     while frontier:
         node = frontier.pop()
-        explored.add(node.state)
         for child_state in problem.get_successors(node.state):
             child = Node(child_state, node, node.cost + 1)
             if child.state not in explored and child not in frontier:
+                explored.add(child.state)
                 if problem.goal_test(child.state):
                     return child
                 frontier.append(child)
     return None
 
-def ids(problem):
-    depth_limit = 0
-    while True:
-        result = dfs(problem)
-        if result is not None:
-            return result
-        depth_limit += 1
+def ids(problem, depth_limit=None):
+    if depth_limit is None:
+        depth_limit = None
+
+    start_node = Node(problem.initial_state)
+    if problem.goal_test(start_node.state):
+        return start_node
+    
+    state_eq_limit = [start_node]
+    explored = set()
+    explored.add(start_node.state)
+    
+    while state_eq_limit:
+        stack = state_eq_limit
+        state_eq_limit = []
+        
+        while stack:
+            node = stack.pop()
+            for child_state in problem.get_successors(node.state):
+                child = Node(child_state, node, node.cost + 1)
+                if child.state not in explored and child not in stack:
+                    explored.add(child.state)
+                    if problem.goal_test(child.state):
+                        return child
+                    stack.append(child)
+                    if child.cost == depth_limit:
+                        state_eq_limit.append(child)
+        
+        depth_limit = depth_limit + 1
+    
+    return None
+
 
 if __name__ == '__main__':
     maze = [
@@ -160,12 +187,13 @@ if __name__ == '__main__':
     problem = Problem(maze, (1, 1), (16, 22))
     node_dfs = dfs(problem)
     node_ids = ids(problem)
+    
     if node_dfs is not None:
         print(node_dfs.get_directions())
         print(node_dfs.cost)
     else:
         print("No solution")
-
+        
     if node_ids is not None:
         print(node_ids.get_directions())
         print(node_ids.cost)
@@ -175,4 +203,5 @@ if __name__ == '__main__':
     if node_ids is not None and node_dfs is not None:
         if node_dfs.get_directions() == node_ids.get_directions():
             print("same")
+
 # %%
