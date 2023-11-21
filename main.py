@@ -22,6 +22,7 @@ class Game():
 
         self.button_width = 140
         self.button_height = 40
+
         self.button_quit = ui.Button("Quit", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.button_play = ui.Button("Play", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.button_start = ui.Button("Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
@@ -36,6 +37,11 @@ class Game():
         self.text_message = ui.Text("Peding", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.BLACK.value)
         self.text_algorithm = ui.Text("None", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.BLACK.value)
 
+        self.astart_menu = False
+        self.button_athgorithm_A_StartA = ui.Button("A Start (A)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_athgorithm_A_StartB = ui.Button("A Start (B)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_athgorithm_A_StartC = ui.Button("A Start (C)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_close_astar_menu = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.run()
 
     def run(self):
@@ -71,28 +77,36 @@ class Game():
                     if self.button_reset.x < mouse[0] < self.button_reset.x + self.button_reset.width and self.button_reset.y < mouse[1] < self.button_reset.y + self.button_reset.height:
                         self.game = None
 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
                     if self.button_athgorithm_BFS.x < mouse[0] < self.button_athgorithm_BFS.x + self.button_athgorithm_BFS.width and self.button_athgorithm_BFS.y < mouse[1] < self.button_athgorithm_BFS.y + self.button_athgorithm_BFS.height:
                         self.game.get_result("bfs") 
 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
                     if self.button_athgorithm_UCS.x < mouse[0] < self.button_athgorithm_UCS.x + self.button_athgorithm_UCS.width and self.button_athgorithm_UCS.y < mouse[1] < self.button_athgorithm_UCS.y + self.button_athgorithm_UCS.height:
                         self.game.get_result("ucs")
                         
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
                     if self.button_athgorithm_DFS.x < mouse[0] < self.button_athgorithm_DFS.x + self.button_athgorithm_DFS.width and self.button_athgorithm_DFS.y < mouse[1] < self.button_athgorithm_DFS.y + self.button_athgorithm_DFS.height:
                         self.game.get_result("dfs")
                         
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
                     if self.button_athgorithm_IDS.x < mouse[0] < self.button_athgorithm_IDS.x + self.button_athgorithm_IDS.width and self.button_athgorithm_IDS.y < mouse[1] < self.button_athgorithm_IDS.y + self.button_athgorithm_IDS.height:
                         self.game.get_result("ids")
+                        
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
+                    if self.button_athgorithm_A_Start.x < mouse[0] < self.button_athgorithm_A_Start.x + self.button_athgorithm_A_Start.width and self.button_athgorithm_A_Start.y < mouse[1] < self.button_athgorithm_A_Start.y + self.button_athgorithm_A_Start.height:
+                        self.astart_menu = True
+
+                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == True:
+                    if self.button_close_astar_menu.x < mouse[0] < self.button_close_astar_menu.x + self.button_close_astar_menu.width and self.button_close_astar_menu.y < mouse[1] < self.button_close_astar_menu.y + self.button_close_astar_menu.height:
+                        self.astart_menu = False
 
             if playgame == True and self.game is not None:
                 self.game.events()
             
             self.draw(playgame)
             py.display.flip()
-            self.clock.tick(12)
+            self.clock.tick(10)
 
         py.quit()
         sys.exit()
@@ -118,16 +132,26 @@ class Game():
         self.screen.fill(EColor.BACKGROUND.value)
 
         if self.game.status == "Pending":
-            self.button_athgorithm_BFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
-            self.button_athgorithm_BFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-            self.button_athgorithm_UCS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
-            self.button_athgorithm_UCS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-            self.button_athgorithm_DFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
-            self.button_athgorithm_DFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-            self.button_athgorithm_IDS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
-            self.button_athgorithm_IDS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-            self.button_athgorithm_A_Start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*9 - self.frame*7)
-            self.button_athgorithm_A_Start.button_hover_change_color(EColor.BUTTON_HOVER.value)
+            if self.astart_menu:
+                self.button_close_astar_menu.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+                self.button_close_astar_menu.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_A_StartA.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
+                self.button_athgorithm_A_StartA.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_A_StartB.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
+                self.button_athgorithm_A_StartB.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_A_StartC.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
+                self.button_athgorithm_A_StartC.button_hover_change_color(EColor.BUTTON_HOVER.value)
+            else:
+                self.button_athgorithm_BFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+                self.button_athgorithm_BFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_UCS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
+                self.button_athgorithm_UCS.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_DFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
+                self.button_athgorithm_DFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_IDS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
+                self.button_athgorithm_IDS.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_athgorithm_A_Start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*9 - self.frame*7)
+                self.button_athgorithm_A_Start.button_hover_change_color(EColor.BUTTON_HOVER.value)
         
         self.button_start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)        
         self.button_start.button_hover_change_color(EColor.BUTTON_HOVER.value)
@@ -152,4 +176,4 @@ class Game():
 
 if __name__ == "__main__":
     game = Game()
-# %%
+    # %%

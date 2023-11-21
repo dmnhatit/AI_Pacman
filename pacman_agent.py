@@ -100,10 +100,24 @@ class Pacman(GameObject):
 class Target(GameObject):
     def __init__(self, x, y, size, color):
         super().__init__(x, y, size, color)
+        self.target_small = py.transform.scale(load.load_img("images\_target_small.png"), (size-3, size-3))
+        self.target_big = py.transform.scale(load.load_img("images\_target_big.png"), (size-3, size-3))
+        self.image = self.target_small
+        self.image_rect = self.image.get_rect()
+        self.image_rect.center = (self.size//2, self.size//2)
+        self.twinkle = True
+        self.small_big_event = py.USEREVENT + 1
     
     def draw(self):
-        py.draw.circle(self.surface, self.color, (self.size //2, self.size //2), self.size//5)
+        self.surface.fill(EColor.BLACK.value)
+        self.surface.blit(self.image, self.image_rect)
 
+    def twinkle_event(self):
+        py.time.set_timer(self.small_big_event, 500)
+        self.image = self.target_small if self.twinkle else self.target_big
+        self.twinkle = not self.twinkle
+        self.draw()
+        
 class Wall(GameObject):
     def __init__(self, x, y, size: int, color=EColor.WALL.value):
         super().__init__(x, y, size, color)

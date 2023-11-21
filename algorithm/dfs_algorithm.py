@@ -2,7 +2,6 @@
 from collections import deque
 import heapq
 
-
 class Node:
 
     def __init__(self, state, parent=None, cost=0):
@@ -82,7 +81,6 @@ class PriorityQueue:
     def __contains__(self, item):
         return item in self.entry_finder       
 
-
 class Problem:
     def __init__(self, maze, initial_state, goal_state):
         self.maze = maze
@@ -106,9 +104,6 @@ class Problem:
         ]
         return successors
 
-
-
-
 def dfs(problem):
     start_node = Node(problem.initial_state)
     if problem.goal_test(start_node.state):
@@ -126,7 +121,6 @@ def dfs(problem):
                 frontier.append(child)
     return None
 
-
 def ids(problem):
     depth_limit = 0
     while True:
@@ -134,8 +128,6 @@ def ids(problem):
         if result is not None:
             return result
         depth_limit += 1
-
-
 
 if __name__ == '__main__':
     maze = [
@@ -164,7 +156,6 @@ if __name__ == '__main__':
         [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-
 
     problem = Problem(maze, (1, 1), (16, 22))
     node_dfs = dfs(problem)

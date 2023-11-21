@@ -13,7 +13,7 @@ class GamePacMan():
         self.start = False
         self.win = False
         self.hero:Pacman = None
-        self.target: Pacman = None
+        self.target: Target = None
         self.walls = []
         self.score = 0
         self.status = "Pending"
@@ -32,7 +32,14 @@ class GamePacMan():
         self.start = False
         self.status = "You Win"
         self.stop_music()
-        self.commands = None
+        self.commands = []
+
+    def lose_game(self):
+        self.win = False
+        self.start = False
+        self.status = "You Lose"
+        self.stop_music()
+        self.commands = []
 
     def add_score(self, score: EScore):
         self.score += score.value
@@ -77,20 +84,22 @@ class GamePacMan():
         keys = py.key.get_pressed()
         self.hero.move_controller(keys)
         self.check_move_hero()
-        
 
     def auto_move(self):
-        if len(self.commands) > 0 and self.commands is not None:
+        if len(self.commands) > 0:
             command = self.commands.pop(0)
             self.add_score(EScore.STEP)
             self.hero.move_command(command)
             self.check_move_hero()
         else:
             self.commands.clear()
+            if self.win == False:
+                self.lose_game()
     
     def events(self):
         if self.hero is not None:
             self.hero.mounth_event()
+            self.target.twinkle_event()
             if self.start: 
                 self.status = "Searching"
                 self.auto_move()
@@ -118,26 +127,33 @@ class GamePacMan():
                     self.walls.append(wall)
                 elif self.game_board[row][col] == 2:
                     self.target = Target(col, row, self.square, EColor.TARGET.value)
-        
+                # elif self.game_board[row][col] == 3:
         self.hero = Pacman(1, 1, self.square)
 
     def get_maze(self, file_path):
         return load.load_maze(file_path)
     
     def get_result(self, algorithm):
+        result = Node()
         problem = Problem(self.game_board, (self.hero.y, self.hero.x), (self.target.y, self.target.x))
         if algorithm == "bfs":
             self.algorithm = "BFS"
-            self.commands = bfs(problem).get_directions()
+            result = bfs(problem)
         elif algorithm == "ucs":
             self.algorithm = "UCS"
-            self.commands = ucs(problem).get_directions()
+            result = ucs(problem)
         elif algorithm == "dfs":
             self.algorithm = "DFS"
-            self.commands = dfs(problem).get_directions()
+            result = dfs(problem)
         elif algorithm == "ids":
             self.algorithm = "IDS"
-            self.commands = ids(problem).get_directions()
+            result = ids(problem)
+        elif algorithm == "astar":
+            self.algorithm = "A Star"
+            result = astar(problem)
+        
+        self.commands = result.get_directions() if result is not None else []
+        print(self.commands)
     
     def play_music(self):
         load.load_mp3("mp3\playing_pacman.mp3")
