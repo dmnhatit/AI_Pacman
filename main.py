@@ -62,10 +62,11 @@ class Game():
                         playgame = True
                         self.game = GamePacMan("input\maze.txt")
                 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
+                elif event.type == py.MOUSEBUTTONDOWN and playgame == True:
                     if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
                         playgame = False
                         self.game.stop_music()
+                        self.game = None
                                 
                 if event.type == py.MOUSEBUTTONDOWN and playgame == True:
                     if self.button_start.x < mouse[0] < self.button_start.x + self.button_start.width and self.button_start.y < mouse[1] < self.button_start.y + self.button_start.height:
