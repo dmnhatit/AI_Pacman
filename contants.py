@@ -7,7 +7,7 @@ class EColor(Enum):
     BUTTON_TITLE = (255, 0, 0)
     BUTTON_HOVER = (227, 80, 171)
     TEXT_TITLE = (255, 255, 255)
-    TARGET = (255, 255, 0)
+    PATH = (255, 255, 255)
     WALL = (0, 0, 255)
     BACKGROUND_OBJECT = (0, 0, 0, 0)
 

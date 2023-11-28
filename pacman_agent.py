@@ -1,6 +1,7 @@
 import pygame as py
 import load
 from contants import EAngle, EColor, EPosition
+from ui import Text
 
 class GameObject():
     def __init__(self, x, y, size: int, color = EColor.BLACK.value):
@@ -105,22 +106,28 @@ class Target(GameObject):
         self.image = self.target_small
         self.image_rect = self.image.get_rect()
         self.image_rect.center = (self.size//2, self.size//2)
-        self.twinkle = True
+        self.animation = True
         self.small_big_event = py.USEREVENT + 1
     
     def draw(self):
         self.surface.fill(EColor.BLACK.value)
         self.surface.blit(self.image, self.image_rect)
 
-    def twinkle_event(self):
+    def animation_event(self):
         py.time.set_timer(self.small_big_event, 500)
-        self.image = self.target_small if self.twinkle else self.target_big
-        self.twinkle = not self.twinkle
-        self.draw()
+        self.image = self.target_small if self.animation else self.target_big
+        self.animation = not self.animation
         
 class Wall(GameObject):
     def __init__(self, x, y, size: int, color=EColor.WALL.value):
         super().__init__(x, y, size, color)
 
     def draw(self):
-       py.draw.circle(self.surface, self.color, (self.size//2, self.size//2), 15.5)
+       py.draw.circle(self.surface, self.color, (self.size//2, self.size//2), 15.9)
+
+class Path(GameObject):
+    def __init__(self, x, y, size: int, color=EColor.BLACK.value):
+        super().__init__(x, y, size, color)
+    
+    def draw(self):
+       py.draw.rect(self.surface, self.color, [5, 5, self.size - 10, self.size - 10])

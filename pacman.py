@@ -1,7 +1,7 @@
 import pygame as py
 import load
 from contants import EColor, EScore 
-from pacman_agent import Pacman, Target, Wall
+from pacman_agent import Pacman, Target, Wall, Path
 from algorithm import *
 
 class GamePacMan():
@@ -20,6 +20,7 @@ class GamePacMan():
         self.algorithm = "None"
         
         self.commands = []
+        self.path_result = []
 
         self.set_value()
         self.stop_music()
@@ -32,7 +33,6 @@ class GamePacMan():
         self.start = False
         self.status = "You Win"
         self.stop_music()
-        self.commands = []
 
     def lose_game(self):
         self.win = False
@@ -64,6 +64,7 @@ class GamePacMan():
         return False, None
     
     def check_move_hero(self):
+        self.path_result.append((self.hero.x, self.hero.y))
         if self.check_hero_eat_target(self.hero.position_future):
             self.hero.move_to_location()
             self.win_game()
@@ -99,7 +100,7 @@ class GamePacMan():
     def events(self):
         if self.hero is not None:
             self.hero.mounth_event()
-            self.target.twinkle_event()
+            self.target.animation_event()
             if self.start: 
                 self.status = "Searching"
                 self.auto_move()
@@ -118,6 +119,12 @@ class GamePacMan():
         
         if self.hero is not None:
             self.screen.blit(self.hero.surface, (self.hero.x*self.hero.size, self.hero.y*self.hero.size))
+        
+        if len(self.path_result) > 0:
+            for index in self.path_result:
+                path = Path(index[0], index[1], self.square,  EColor.PATH.value)
+                path.draw()
+                self.screen.blit(path.surface, path.surface_rect)
 
     def set_value(self): 
         for row in range(len(self.game_board)):
@@ -126,9 +133,9 @@ class GamePacMan():
                     wall = Wall(col, row, self.square, EColor.WALL.value)
                     self.walls.append(wall)
                 elif self.game_board[row][col] == 2:
-                    self.target = Target(col, row, self.square, EColor.TARGET.value)
-                # elif self.game_board[row][col] == 3:
-        self.hero = Pacman(1, 1, self.square)
+                    self.target = Target(col, row, self.square, EColor.PATH.value)
+                elif self.game_board[row][col] == 3:
+                    self.hero = Pacman(col, row, self.square)
 
     def get_maze(self, file_path):
         return load.load_maze(file_path)
