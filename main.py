@@ -3,45 +3,60 @@ import pygame as py
 import sys
 import load
 from pacman import GamePacMan
-from contants import EColor
+from contants import EGame, EColor, EAlgorithm, EStatus, EMap
 import ui
 
 class Game():
     def __init__(self):        
         py.init()
-        self.width = 750
-        self.height = 600
-        self.frame = 10
+        self.width = EGame.WIDTH.value
+        self.height = EGame.HEIGHT.value
+        self.frame = EGame.FRAME.value
         self.screen = py.display.set_mode((self.width + self.frame*2, self.height + self.frame*2))
         self.game = None
+        self.map = EMap.INIT.value
 
         py.display.set_caption("Game Pacman")
-        self.background_img = py.transform.scale(load.load_img('images\cover.jpg'), (610, 750))
+        self.background_img = py.transform.scale(load.load_img('images\cover.jpg'), (EGame.COVER_WIDTH.value, EGame.COVER_HEIGHT.value))
         self.clock = py.time.Clock()
         self.font = py.font.Font(None, 25)
 
-        self.button_width = 140
-        self.button_height = 40
+        self.button_width = EGame.BUTTON_WIDTH.value
+        self.button_height = EGame.BUTTON_HEIGHT.value
 
         self.button_quit = ui.Button("Quit", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.button_play = ui.Button("Play", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        
         self.button_start = ui.Button("Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.button_reset = ui.Button("Reset", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
         self.button_return = ui.Button("Return", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_A_Start = ui.Button("A Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_BFS = ui.Button("BFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_UCS = ui.Button("UCS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_DFS = ui.Button("DFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_IDS = ui.Button("IDS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.text_score = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.BLACK.value)
-        self.text_message = ui.Text("Peding", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.BLACK.value)
-        self.text_algorithm = ui.Text("None", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.BLACK.value)
+        
+        self.text_score = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
+        self.text_message = ui.Text(EStatus.PENDING.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
+        self.text_algorithm = ui.Text(EAlgorithm.INIT.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
 
-        self.astart_menu = False
-        self.button_athgorithm_A_StartA = ui.Button("A Start (A)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_A_StartB = ui.Button("A Start (B)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_athgorithm_A_StartC = ui.Button("A Start (C)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
-        self.button_close_astar_menu = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.algorithm_menu = False
+        self.button_algorithm_menu = ui.Button("Choose Algorithm", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_BFS_athgorithm = ui.Button("BFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_UCS_athgorithm = ui.Button("UCS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_DFS_athgorithm = ui.Button("DFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_IDS_athgorithm = ui.Button("IDS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_athgorithm_close = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+
+        self.astart_menu = False      
+        self.button_astart_menu = ui.Button("Choose A Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+
+        self.button_A_StartA_athgorithm = ui.Button("A Start (A)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_A_StartB_athgorithm = ui.Button("A Start (B)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_A_StartC_athgorithm = ui.Button("A Start (C)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_astar_close = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+
+        self.map_menu = False
+        self.button_map_menu = ui.Button("Choose Map", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_map_1 = ui.Button("Map 1", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        self.button_map_2 = ui.Button("Map 2", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value) 
+        self.button_close_map = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value)
+        
         self.run()
 
     def run(self):
@@ -54,54 +69,84 @@ class Game():
                     running = False
                 
                 if event.type == py.MOUSEBUTTONDOWN:
+                    # Quit
                     if self.button_quit.x < mouse[0] < self.button_quit.x + self.button_quit.width and self.button_quit.y < mouse[1] < self.button_quit.y + self.button_quit.height:
                         running = False
 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == False:
-                    if self.button_play.x < mouse[0] < self.button_play.x + self.button_play.width and self.button_play.y < mouse[1] < self.button_play.y + self.button_play.height:
-                        playgame = True
-                        self.game = GamePacMan("input\maze.txt")
-                
-                elif event.type == py.MOUSEBUTTONDOWN and playgame == True:
-                    if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
-                        playgame = False
-                        self.game.stop_music()
-                        self.game = None
+                    if playgame == False:
+                        # Play Game
+                        if self.button_play.x < mouse[0] < self.button_play.x + self.button_play.width and self.button_play.y < mouse[1] < self.button_play.y + self.button_play.height:
+                            playgame = True
+                    else:
+                        # Open Algorithm Menu
+                        if self.algorithm_menu and self.game.status == EStatus.PENDING.value:
+                            if self.button_athgorithm_close.x < mouse[0] < self.button_athgorithm_close.x + self.button_athgorithm_close.width and self.button_athgorithm_close.y < mouse[1] < self.button_athgorithm_close.y + self.button_athgorithm_close.height:
+                                self.algorithm_menu = False
+                                self.astart_menu = False
+                                self.map_menu = False
+                        
+                            elif self.button_BFS_athgorithm.x < mouse[0] < self.button_BFS_athgorithm.x + self.button_BFS_athgorithm.width and self.button_BFS_athgorithm.y < mouse[1] < self.button_BFS_athgorithm.y + self.button_BFS_athgorithm.height:
+                                self.game.get_result(EAlgorithm.BFS) 
+
+                            elif self.button_UCS_athgorithm.x < mouse[0] < self.button_UCS_athgorithm.x + self.button_UCS_athgorithm.width and self.button_UCS_athgorithm.y < mouse[1] < self.button_UCS_athgorithm.y + self.button_UCS_athgorithm.height:
+                                self.game.get_result(EAlgorithm.UCS)
+                                    
+                            elif self.button_DFS_athgorithm.x < mouse[0] < self.button_DFS_athgorithm.x + self.button_DFS_athgorithm.width and self.button_DFS_athgorithm.y < mouse[1] < self.button_DFS_athgorithm.y + self.button_DFS_athgorithm.height:
+                                self.game.get_result(EAlgorithm.DFS)
+                                    
+                            elif self.button_IDS_athgorithm.x < mouse[0] < self.button_IDS_athgorithm.x + self.button_IDS_athgorithm.width and self.button_IDS_athgorithm.y < mouse[1] < self.button_IDS_athgorithm.y + self.button_IDS_athgorithm.height:
+                                self.game.get_result(EAlgorithm.IDS)
+                        else:
+                            if self.button_algorithm_menu.x < mouse[0] < self.button_algorithm_menu.x + self.button_algorithm_menu.width and self.button_algorithm_menu.y < mouse[1] < self.button_algorithm_menu.y + self.button_algorithm_menu.height:
+                                self.algorithm_menu = True
+                                self.astart_menu = False
+        
+                        # Open A Start Menu
+                        if self.astart_menu and self.game.status == EStatus.PENDING.value:
+                            if self.button_astar_close.x < mouse[0] < self.button_astar_close.x + self.button_astar_close.width and self.button_astar_close.y < mouse[1] < self.button_astar_close.y + self.button_astar_close.height:
+                                self.astart_menu = False
+                                self.map_menu = False
+                                self.algorithm_menu = False
+                        else:
+                            if self.button_astart_menu.x < mouse[0] < self.button_astart_menu.x + self.button_astart_menu.width and self.button_astart_menu.y < mouse[1] < self.button_astart_menu.y + self.button_astart_menu.height:
+                                self.astart_menu = True
+                                self.algorithm_menu = False  
+
+                        # Open Map Menu
+                        if self.map_menu and self.game.status == EStatus.PENDING.value:
+                            if self.button_close_map.x < mouse[0] < self.button_close_map.x + self.button_close_map.width and self.button_close_map.y < mouse[1] < self.button_close_map.y + self.button_close_map.height:
+                                self.map_menu = False
+                                self.astart_menu = False
+                                self.algorithm_menu = False
+                            
+                            elif self.button_map_1.x < mouse[0] < self.button_map_1.x + self.button_map_1.width and self.button_map_1.y < mouse[1] < self.button_map_1.y + self.button_map_1.height:
+                                self.map = EMap.MAP_1.value 
+                                self.game = GamePacMan(self.map)
                                 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
-                    if self.button_start.x < mouse[0] < self.button_start.x + self.button_start.width and self.button_start.y < mouse[1] < self.button_start.y + self.button_start.height:
-                        self.game.win = False
-                        self.game.start = True
-                        self.game.play_music()
-                                
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True:
-                    if self.button_reset.x < mouse[0] < self.button_reset.x + self.button_reset.width and self.button_reset.y < mouse[1] < self.button_reset.y + self.button_reset.height:
-                        self.game = None
+                            elif self.button_map_2.x < mouse[0] < self.button_map_2.x + self.button_map_2.width and self.button_map_2.y < mouse[1] < self.button_map_2.y + self.button_map_2.height:
+                                self.map = EMap.MAP_2.value 
+                                self.game = GamePacMan(self.map)
+                        else:
+                            if self.button_map_menu.x < mouse[0] < self.button_map_menu.x + self.button_map_menu.width and self.button_map_menu.y < mouse[1] < self.button_map_menu.y + self.button_map_menu.height:
+                                self.map_menu = True
 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
-                    if self.button_athgorithm_BFS.x < mouse[0] < self.button_athgorithm_BFS.x + self.button_athgorithm_BFS.width and self.button_athgorithm_BFS.y < mouse[1] < self.button_athgorithm_BFS.y + self.button_athgorithm_BFS.height:
-                        self.game.get_result("bfs") 
+                        if self.game.status != EStatus.PENDING.value:
+                            # Reset
+                            if self.button_reset.x < mouse[0] < self.button_reset.x + self.button_reset.width and self.button_reset.y < mouse[1] < self.button_reset.y + self.button_reset.height:
+                                self.game = None 
+                            
+                            # Start
+                            if self.button_start.x < mouse[0] < self.button_start.x + self.button_start.width and self.button_start.y < mouse[1] < self.button_start.y + self.button_start.height:
+                                self.game.win = False
+                                self.game.start = True
+                                self.game.play_music() 
 
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
-                    if self.button_athgorithm_UCS.x < mouse[0] < self.button_athgorithm_UCS.x + self.button_athgorithm_UCS.width and self.button_athgorithm_UCS.y < mouse[1] < self.button_athgorithm_UCS.y + self.button_athgorithm_UCS.height:
-                        self.game.get_result("ucs")
-                        
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
-                    if self.button_athgorithm_DFS.x < mouse[0] < self.button_athgorithm_DFS.x + self.button_athgorithm_DFS.width and self.button_athgorithm_DFS.y < mouse[1] < self.button_athgorithm_DFS.y + self.button_athgorithm_DFS.height:
-                        self.game.get_result("dfs")
-                        
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
-                    if self.button_athgorithm_IDS.x < mouse[0] < self.button_athgorithm_IDS.x + self.button_athgorithm_IDS.width and self.button_athgorithm_IDS.y < mouse[1] < self.button_athgorithm_IDS.y + self.button_athgorithm_IDS.height:
-                        self.game.get_result("ids")
-                        
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == False:
-                    if self.button_athgorithm_A_Start.x < mouse[0] < self.button_athgorithm_A_Start.x + self.button_athgorithm_A_Start.width and self.button_athgorithm_A_Start.y < mouse[1] < self.button_athgorithm_A_Start.y + self.button_athgorithm_A_Start.height:
-                        self.astart_menu = True
-
-                if event.type == py.MOUSEBUTTONDOWN and playgame == True and self.astart_menu == True:
-                    if self.button_close_astar_menu.x < mouse[0] < self.button_close_astar_menu.x + self.button_close_astar_menu.width and self.button_close_astar_menu.y < mouse[1] < self.button_close_astar_menu.y + self.button_close_astar_menu.height:
-                        self.astart_menu = False
-
+                        # Return
+                        if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
+                            playgame = False
+                            self.game.stop_music()
+                            self.game = None
+          
             if playgame == True and self.game is not None:
                 self.game.events()
             
@@ -117,7 +162,6 @@ class Game():
             self.draw_game()
         else:
             self.draw_main()
-            
 
     def draw_main(self):
         self.screen.fill(EColor.BACKGROUND.value)
@@ -129,35 +173,27 @@ class Game():
         self.button_play.button_hover_change_color(EColor.BUTTON_HOVER.value)
 
     def draw_game(self):
-        self.game = GamePacMan("input\maze.txt") if self.game is None else self.game
+        self.game = GamePacMan(self.map) if self.game is None else self.game
         self.screen.fill(EColor.BACKGROUND.value)
 
-        if self.game.status == "Pending":
+        if self.game.status == EStatus.PENDING.value:
             if self.astart_menu:
-                self.button_close_astar_menu.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
-                self.button_close_astar_menu.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_A_StartA.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
-                self.button_athgorithm_A_StartA.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_A_StartB.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
-                self.button_athgorithm_A_StartB.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_A_StartC.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
-                self.button_athgorithm_A_StartC.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.draw_astar_menu()
+            elif self.algorithm_menu:
+                self.draw_algorithm_menu()
+            elif self.map_menu:
+                self.draw_map_menu()
             else:
-                self.button_athgorithm_BFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
-                self.button_athgorithm_BFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_UCS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
-                self.button_athgorithm_UCS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_DFS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
-                self.button_athgorithm_DFS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_IDS.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
-                self.button_athgorithm_IDS.button_hover_change_color(EColor.BUTTON_HOVER.value)
-                self.button_athgorithm_A_Start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*9 - self.frame*7)
-                self.button_athgorithm_A_Start.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_map_menu.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)        
+                self.button_map_menu.button_hover_change_color(EColor.BUTTON_HOVER.value)
+                self.button_algorithm_menu.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)        
+                self.button_algorithm_menu.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        else:
+            self.button_start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)        
+            self.button_start.button_hover_change_color(EColor.BUTTON_HOVER.value)
+            self.button_reset.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)        
+            self.button_reset.button_hover_change_color(EColor.BUTTON_HOVER.value)
         
-        self.button_start.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)        
-        self.button_start.button_hover_change_color(EColor.BUTTON_HOVER.value)
-        self.button_reset.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)        
-        self.button_reset.button_hover_change_color(EColor.BUTTON_HOVER.value)
         self.button_return.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*2)        
         self.button_return.button_hover_change_color(EColor.BUTTON_HOVER.value)
         self.button_quit.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height + self.frame)
@@ -174,6 +210,38 @@ class Game():
 
         self.game.draw()
         self.screen.blit(self.game.screen,(self.frame,self.frame))
+    
+    def draw_algorithm_menu(self):
+        self.button_athgorithm_close.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)
+        self.button_athgorithm_close.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_BFS_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)
+        self.button_BFS_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_UCS_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+        self.button_UCS_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_DFS_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
+        self.button_DFS_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_IDS_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
+        self.button_IDS_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_astart_menu.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*8 - self.frame*6)
+        self.button_astart_menu.button_hover_change_color(EColor.BUTTON_HOVER.value)
+
+    def draw_astar_menu(self):
+        self.button_astar_close.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)
+        self.button_astar_close.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_A_StartA_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)
+        self.button_A_StartA_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_A_StartB_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+        self.button_A_StartB_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_A_StartC_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
+        self.button_A_StartC_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER.value)
+    
+    def draw_map_menu(self):
+        self.button_close_map.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)
+        self.button_close_map.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_map_1.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)
+        self.button_map_1.button_hover_change_color(EColor.BUTTON_HOVER.value)
+        self.button_map_2.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+        self.button_map_2.button_hover_change_color(EColor.BUTTON_HOVER.value)
 
 if __name__ == "__main__":
     game = Game()

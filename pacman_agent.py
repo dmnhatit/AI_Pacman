@@ -1,10 +1,9 @@
 import pygame as py
 import load
 from contants import EAngle, EColor, EPosition
-from ui import Text
 
 class GameObject():
-    def __init__(self, x, y, size: int, color = EColor.BLACK.value):
+    def __init__(self, x, y, size: int, color = EColor.INIT.value):
         self.x = x
         self.y = y
         self.size = size
@@ -14,7 +13,7 @@ class GameObject():
         self.image = None
 
     def draw(self):
-        self.surface.fill(EColor.BACKGROUND_OBJECT)
+        self.surface.fill(EColor.BACKGROUND_PACMAN.value)
 
     def tick(self):
         pass
@@ -41,7 +40,7 @@ class Pacman(GameObject):
         self.mounth_open = True
 
     def draw(self):
-        self.surface.fill(EColor.BLACK.value)
+        super().draw()
         self.surface.blit(self.image, self.image_rect)
 
     def mounth_event(self):
@@ -110,24 +109,35 @@ class Target(GameObject):
         self.small_big_event = py.USEREVENT + 1
     
     def draw(self):
-        self.surface.fill(EColor.BLACK.value)
+        super().draw()
         self.surface.blit(self.image, self.image_rect)
 
     def animation_event(self):
         py.time.set_timer(self.small_big_event, 500)
         self.image = self.target_small if self.animation else self.target_big
         self.animation = not self.animation
+        self.draw()
         
 class Wall(GameObject):
     def __init__(self, x, y, size: int, color=EColor.WALL.value):
         super().__init__(x, y, size, color)
 
     def draw(self):
+       super().draw()
        py.draw.circle(self.surface, self.color, (self.size//2, self.size//2), 15.9)
 
 class Path(GameObject):
-    def __init__(self, x, y, size: int, color=EColor.BLACK.value):
+    def __init__(self, x, y, size: int, color=EColor.PATH.value):
         super().__init__(x, y, size, color)
     
     def draw(self):
+       super().draw()
+       py.draw.rect(self.surface, self.color, [5, 5, self.size - 10, self.size - 10])
+
+class DeathPit(GameObject):
+    def __init__(self, x, y, size: int, color=EColor.DEATH_PIT.value):
+        super().__init__(x, y, size, color)
+    
+    def draw(self):
+       super().draw()
        py.draw.rect(self.surface, self.color, [5, 5, self.size - 10, self.size - 10])

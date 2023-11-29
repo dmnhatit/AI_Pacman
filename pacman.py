@@ -1,13 +1,13 @@
 import pygame as py
 import load
-from contants import EColor, EScore 
-from pacman_agent import Pacman, Target, Wall, Path
+from contants import EPacman, EColor, EScore , EAlgorithm, EStatus
+from pacman_agent import Pacman, Target, Wall, Path, DeathPit
 from algorithm import *
 
 class GamePacMan():
     def __init__(self, file_path):
         self.game_board = self.get_maze(file_path)
-        self.size = 600
+        self.size = EPacman.SIZE.value
         self.square = self.size/len(self.game_board[0])
         self.screen = py.Surface((self.size, self.size))
         self.start = False
@@ -15,9 +15,10 @@ class GamePacMan():
         self.hero:Pacman = None
         self.target: Target = None
         self.walls = []
+        self.death_pits = []
         self.score = 0
-        self.status = "Pending"
-        self.algorithm = "None"
+        self.status = EStatus.PENDING.value
+        self.algorithm = EAlgorithm.INIT.value
         
         self.commands = []
         self.path_result = []
@@ -31,28 +32,36 @@ class GamePacMan():
     def win_game(self):
         self.win = True
         self.start = False
-        self.status = "You Win"
+        self.status = EStatus.WIN.value
         self.stop_music()
 
     def lose_game(self):
         self.win = False
         self.start = False
-        self.status = "You Lose"
+        self.status = EStatus.LOSE.value
         self.stop_music()
         self.commands = []
 
     def add_score(self, score: EScore):
         self.score += score.value
 
-    def check_hero_eat_target(self, direction):
+    def colliderect_target(self, direction):
         hero_rect = py.Rect(self.hero.x*self.hero.size + direction[0]*self.hero.speed, self.hero.y*self.hero.size + direction[1]*self.hero.speed, self.hero.size, self.hero.size)
         if self.target is not None:
             target_rect = py.Rect(self.target.x*self.target.size, self.target.y*self.target.size, self.target.size, self.target.size)
             if hero_rect.colliderect(target_rect):
                 self.target == None
-                self.score += EScore.TARGET.value
-                print("Founded target")
+                self.add_score(EScore.TARGET)
                 return True
+        return False
+
+    def colliderect_death_pit(self, direction):
+        hero_rect = py.Rect(self.hero.x*self.hero.size + direction[0]*self.hero.speed, self.hero.y*self.hero.size + direction[1]*self.hero.speed, self.hero.size, self.hero.size)
+        for item in self.death_pits:
+            death_pit = py.Rect(item.x*item.size, item.y*item.size, item.size, item.size)
+            if hero_rect.colliderect(death_pit):
+                self.add_score(EScore.DEATH_PIT)
+                return True       
         return False
 
     def colliderect_wall(self, direction):
@@ -60,26 +69,24 @@ class GamePacMan():
         for item in self.walls:
             wall_rect = py.Rect(item.x*item.size, item.y*item.size, item.size, item.size)
             if hero_rect.colliderect(wall_rect):
-                return True, item        
-        return False, None
+                return True       
+        return False
     
     def check_move_hero(self):
         self.path_result.append((self.hero.x, self.hero.y))
-        if self.check_hero_eat_target(self.hero.position_future):
+        if self.colliderect_target(self.hero.position_future):
             self.hero.move_to_location()
             self.win_game()
+        elif self.algorithm ==  EAlgorithm.UCS.value and self.colliderect_death_pit(self.hero.position_future):
+            self.hero.move_to_location()
         else:
-            collision_feature, wall = self.colliderect_wall(self.hero.position_future)
-            if not collision_feature:
+            if not self.colliderect_wall(self.hero.position_future):
                 self.hero.move_to_location()
             else:
-                collision, wall = self.colliderect_wall(self.hero.position)
-                if not collision:
+                if not self.colliderect_wall(self.hero.position):
                     self.hero.angel_future = self.hero.angel
                     self.hero.position_future = self.hero.position
                     self.hero.move_to_location()
-                else:
-                    print(f"Collision with wall at position ({wall.x}, {wall.y})")
     
     def controller_move(self):
         keys = py.key.get_pressed()
@@ -99,14 +106,12 @@ class GamePacMan():
     
     def events(self):
         if self.hero is not None:
-            self.hero.mounth_event()
-            self.target.animation_event()
             if self.start: 
                 self.status = "Searching"
                 self.auto_move()
             
     def draw(self):
-        self.screen.fill(EColor.BLACK.value)
+        self.screen.fill(EColor.BACKGROUND_PACMAN.value)
 
         if len(self.walls) > 0:
             for item in self.walls:
@@ -114,28 +119,41 @@ class GamePacMan():
                 self.screen.blit(item.surface, item.surface_rect)
 
         if self.target is not None:
-            self.target.draw()
+            self.target.animation_event()
             self.screen.blit(self.target.surface, self.target.surface_rect)
         
         if self.hero is not None:
+            self.hero.mounth_event()
             self.screen.blit(self.hero.surface, (self.hero.x*self.hero.size, self.hero.y*self.hero.size))
         
+        if self.algorithm == EAlgorithm.UCS.value:
+            if len(self.death_pits) > 0:
+                for item in self.death_pits:
+                    item.draw()
+                    self.screen.blit(item.surface, item.surface_rect)
+
         if len(self.path_result) > 0:
             for index in self.path_result:
                 path = Path(index[0], index[1], self.square,  EColor.PATH.value)
                 path.draw()
                 self.screen.blit(path.surface, path.surface_rect)
-
+        
     def set_value(self): 
         for row in range(len(self.game_board)):
             for col in range(len(self.game_board[0])):
-                if self.game_board[row][col] == 0:
+                if self.game_board[row][col] == EPacman.WALL.value:
                     wall = Wall(col, row, self.square, EColor.WALL.value)
                     self.walls.append(wall)
-                elif self.game_board[row][col] == 2:
+
+                elif self.game_board[row][col] == EPacman.TARGET.value:
                     self.target = Target(col, row, self.square, EColor.PATH.value)
-                elif self.game_board[row][col] == 3:
+
+                elif self.game_board[row][col] == EPacman.PACMAN.value:
                     self.hero = Pacman(col, row, self.square)
+
+                elif self.game_board[row][col] == EPacman.DEATH_PIT.value:
+                    death_pit = DeathPit(col, row, self.square)
+                    self.death_pits.append(death_pit)
 
     def get_maze(self, file_path):
         return load.load_maze(file_path)
@@ -143,24 +161,22 @@ class GamePacMan():
     def get_result(self, algorithm):
         result = Node()
         problem = Problem(self.game_board, (self.hero.y, self.hero.x), (self.target.y, self.target.x))
-        if algorithm == "bfs":
-            self.algorithm = "BFS"
+        if algorithm == EAlgorithm.BFS:
             result = bfs(problem)
-        elif algorithm == "ucs":
-            self.algorithm = "UCS"
+        elif algorithm == EAlgorithm.UCS:
             result = ucs(problem)
-        elif algorithm == "dfs":
-            self.algorithm = "DFS"
+        elif algorithm == EAlgorithm.DFS:
             result = dfs(problem)
-        elif algorithm == "ids":
-            self.algorithm = "IDS"
+        elif algorithm == EAlgorithm.IDS:
             result = ids(problem)
-        elif algorithm == "astar":
-            self.algorithm = "A Star"
+        elif algorithm == EAlgorithm.ASTAR:
             result = astar(problem)
-        
+
         self.commands = result.get_directions() if result is not None else []
-        print(self.commands)
+        if self.commands is not None:
+            self.status = EStatus.READY.value
+            self.algorithm = algorithm.value
+
     
     def play_music(self):
         load.load_mp3("mp3\playing_pacman.mp3")
