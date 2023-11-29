@@ -140,11 +140,11 @@ def ucs(problem):
             return current_node
         explored.add(current_node.state)
         for child_state in problem.get_successors(current_node.state):
-            # if problem.maze[child_state[0]][child_state[1]] == 5: //có trọng số
-            #     child_node = Node(child_state, current_node, current_node.cost + 1)
-            # else:
-            #     child_node = Node(child_state, current_node, current_node.cost + 5)
-            child_node = Node(child_state, current_node, current_node.cost + 1)
+            if problem.maze[child_state[0]][child_state[1]] == 5: #có trọng số
+                child_node = Node(child_state, current_node, current_node.cost + 100)
+            else:
+                child_node = Node(child_state, current_node, current_node.cost + 1)
+            # child_node = Node(child_state, current_node, current_node.cost + 1)
             if child_state not in explored and child_node not in frontier:
                 frontier.put(child_node, child_node.cost)
             elif (
