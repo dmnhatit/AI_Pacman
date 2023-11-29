@@ -17,10 +17,21 @@ class GameObject():
 
     def tick(self):
         pass
+    
+    def get_x(self):
+        return self.x
+    
+    def get_y(self):
+        return self.y
 
-    def set_position(self, x, y):
-        self.x = x
-        self.y = y
+    def get_size(self):
+        return self.size
+
+    def get_surface(self):
+        return self.surface
+
+    def get_surface_rect(self):
+        return self.surface_rect
 
 class Pacman(GameObject):
     def __init__(self, x, y, size):
@@ -38,6 +49,9 @@ class Pacman(GameObject):
 
         self.open_mouth_event = py.USEREVENT + 1
         self.mounth_open = True
+    
+    def get_speed(self):
+        return self.speed
 
     def draw(self):
         super().draw()

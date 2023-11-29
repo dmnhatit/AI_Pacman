@@ -7,8 +7,8 @@ class EGame(Enum):
     BUTTON_WIDTH = 160
     BUTTON_HEIGHT = 40
     FONT_SIZE = 25
-    COVER_WIDTH = 610
-    COVER_HEIGHT = 750
+    COVER_WIDTH = 730
+    COVER_HEIGHT = 175
 
 class EPacman(Enum):
     SIZE = 600
@@ -19,10 +19,14 @@ class EPacman(Enum):
     
 class EColor(Enum):
     INIT = (0, 0, 0)
-    BACKGROUND = (33, 36, 77)
-    BUTTON = (74, 38, 171)
+    BACKGROUND_TYPE1 = (255, 255, 0)
+    BACKGROUND_TYPE2 = (0, 0, 0)
+    BACKGROUND_TYPE3 = (129, 185, 249)  
+    BACKGROUND_TYPE4 = (250, 67, 39)     
+    BUTTON = (255, 255, 50)
     BUTTON_TITLE = (255, 0, 0)
-    BUTTON_HOVER = (227, 80, 171)
+    BUTTON_HOVER_TYPE_1 = (129, 185, 249)
+    BUTTON_HOVER_TYPE_2 = (250, 67, 39)
     TEXT_TITLE = (255, 255, 255)
     PATH = (255, 255, 255)
     WALL = (70, 70, 255)

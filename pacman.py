@@ -25,6 +25,24 @@ class GamePacMan():
 
         self.set_value()
         self.stop_music()
+        
+    def get_status(self):
+        return self.status
+
+    def get_algorithm(self):
+        return self.algorithm
+
+    def get_score(self):
+        return self.score
+    
+    def get_screen(self):
+        return self.screen
+    
+    def set_win(self, is_win):
+        self.win = is_win
+    
+    def set_start(self, is_start):
+        self.start = is_start
   
     def display_score(self):
         pass
@@ -46,9 +64,9 @@ class GamePacMan():
         self.score += score.value
 
     def colliderect_target(self, direction):
-        hero_rect = py.Rect(self.hero.x*self.hero.size + direction[0]*self.hero.speed, self.hero.y*self.hero.size + direction[1]*self.hero.speed, self.hero.size, self.hero.size)
+        hero_rect = py.Rect(self.hero.get_x()*self.hero.get_size() + direction[0]*self.hero.get_speed(), self.hero.get_y()*self.hero.get_size() + direction[1]*self.hero.get_speed(), self.hero.get_size(), self.hero.get_size())
         if self.target is not None:
-            target_rect = py.Rect(self.target.x*self.target.size, self.target.y*self.target.size, self.target.size, self.target.size)
+            target_rect = py.Rect(self.target.get_x()*self.target.get_size(), self.target.get_y()*self.target.get_size(), self.target.get_size(), self.target.get_size())
             if hero_rect.colliderect(target_rect):
                 self.target == None
                 self.add_score(EScore.TARGET)
@@ -56,18 +74,18 @@ class GamePacMan():
         return False
 
     def colliderect_death_pit(self, direction):
-        hero_rect = py.Rect(self.hero.x*self.hero.size + direction[0]*self.hero.speed, self.hero.y*self.hero.size + direction[1]*self.hero.speed, self.hero.size, self.hero.size)
+        hero_rect = py.Rect(self.hero.get_x()*self.hero.get_size() + direction[0]*self.hero.get_speed(), self.hero.get_y()*self.hero.get_size() + direction[1]*self.hero.get_speed(), self.hero.get_size(), self.hero.get_size())
         for item in self.death_pits:
-            death_pit = py.Rect(item.x*item.size, item.y*item.size, item.size, item.size)
+            death_pit = py.Rect(item.get_x()*item.get_size(), item.get_y()*item.get_size(), item.get_size(), item.get_size())
             if hero_rect.colliderect(death_pit):
                 self.add_score(EScore.DEATH_PIT)
                 return True       
         return False
 
     def colliderect_wall(self, direction):
-        hero_rect = py.Rect(self.hero.x*self.hero.size + direction[0]*self.hero.speed, self.hero.y*self.hero.size + direction[1]*self.hero.speed, self.hero.size, self.hero.size)
+        hero_rect = py.Rect(self.hero.get_x()*self.hero.get_size() + direction[0]*self.hero.get_speed(), self.hero.get_y()*self.hero.get_size() + direction[1]*self.hero.get_speed(), self.hero.get_size(), self.hero.get_size())
         for item in self.walls:
-            wall_rect = py.Rect(item.x*item.size, item.y*item.size, item.size, item.size)
+            wall_rect = py.Rect(item.get_x()*item.get_size(), item.get_y()*item.get_size(), item.get_size(), item.get_size())
             if hero_rect.colliderect(wall_rect):
                 return True       
         return False
@@ -116,27 +134,27 @@ class GamePacMan():
         if len(self.walls) > 0:
             for item in self.walls:
                 item.draw()
-                self.screen.blit(item.surface, item.surface_rect)
+                self.screen.blit(item.get_surface(), item.get_surface_rect())
 
         if self.target is not None:
             self.target.animation_event()
-            self.screen.blit(self.target.surface, self.target.surface_rect)
+            self.screen.blit(self.target.get_surface(), self.target.get_surface_rect())
         
         if self.hero is not None:
             self.hero.mounth_event()
-            self.screen.blit(self.hero.surface, (self.hero.x*self.hero.size, self.hero.y*self.hero.size))
+            self.screen.blit(self.hero.get_surface(), (self.hero.get_x()*self.hero.get_size(), self.hero.get_y()*self.hero.get_size()))
         
         if self.algorithm == EAlgorithm.UCS.value:
             if len(self.death_pits) > 0:
                 for item in self.death_pits:
                     item.draw()
-                    self.screen.blit(item.surface, item.surface_rect)
+                    self.screen.blit(item.get_surface(), item.get_surface_rect())
 
         if len(self.path_result) > 0:
             for index in self.path_result:
                 path = Path(index[0], index[1], self.square,  EColor.PATH.value)
                 path.draw()
-                self.screen.blit(path.surface, path.surface_rect)
+                self.screen.blit(path.get_surface(), path.get_surface_rect())
         
     def set_value(self): 
         for row in range(len(self.game_board)):
