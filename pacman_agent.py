@@ -146,6 +146,8 @@ class Path(GameObject):
     
     def draw(self):
        super().draw()
+       py.draw.rect(self.surface, EColor.PATH_BORDER_1.value, [5-2, 5-2, self.size - 10 + 2, self.size - 10 + 2])
+       py.draw.rect(self.surface, EColor.PATH_BORDER_2.value, [5, 5, self.size - 10 + 2, self.size - 10 + 2])
        py.draw.rect(self.surface, self.color, [5, 5, self.size - 10, self.size - 10])
 
 class DeathPit(GameObject):
