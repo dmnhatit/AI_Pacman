@@ -14,9 +14,6 @@ class GameObject():
 
     def draw(self):
         self.surface.fill(EColor.BACKGROUND_PACMAN.value)
-
-    def tick(self):
-        pass
     
     def get_x(self):
         return self.x

@@ -2,7 +2,7 @@
 import pygame as py
 import sys
 import load
-from pacman import GamePacMan
+from pacman import GamePacman
 from contants import EGame, EColor, EAlgorithm, EStatus, EMap
 import ui
 
@@ -17,6 +17,7 @@ class Game():
         self.map = EMap.INIT.value
 
         py.display.set_caption("Game Pacman")
+        py.display.set_icon(load.load_img("images\icon.png"))
         self.background_img = py.transform.scale(load.load_img('images\cover.png'), (EGame.COVER_WIDTH.value, EGame.COVER_HEIGHT.value))
         self.clock = py.time.Clock()
         self.font = py.font.Font(None, EGame.FONT_SIZE.value)
@@ -121,11 +122,11 @@ class Game():
                             
                             elif self.button_map_1.x < mouse[0] < self.button_map_1.x + self.button_map_1.width and self.button_map_1.y < mouse[1] < self.button_map_1.y + self.button_map_1.height:
                                 self.map = EMap.MAP_1.value 
-                                self.game = GamePacMan(self.map)
+                                self.game = GamePacman(self.map)
                                 
                             elif self.button_map_2.x < mouse[0] < self.button_map_2.x + self.button_map_2.width and self.button_map_2.y < mouse[1] < self.button_map_2.y + self.button_map_2.height:
                                 self.map = EMap.MAP_2.value 
-                                self.game = GamePacMan(self.map)
+                                self.game = GamePacman(self.map)
                         else:
                             if self.button_map_menu.x < mouse[0] < self.button_map_menu.x + self.button_map_menu.width and self.button_map_menu.y < mouse[1] < self.button_map_menu.y + self.button_map_menu.height:
                                 self.map_menu = True
@@ -171,13 +172,13 @@ class Game():
         
         self.screen.blit(self.background_img, (30, 180))
 
-        self.button_quit.draw(self.screen, 315, 460)
+        self.button_quit.draw(self.screen, 315, 500)
         self.button_quit.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
-        self.button_play.draw(self.screen, 315, 410)
+        self.button_play.draw(self.screen, 315, 450)
         self.button_play.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
 
     def draw_game(self):
-        self.game = GamePacMan(self.map) if self.game is None else self.game
+        self.game = GamePacman(self.map) if self.game is None else self.game
         self.screen.fill(EColor.BACKGROUND_TYPE1.value)
 
         if self.game.status == EStatus.PENDING.value:

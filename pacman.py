@@ -4,7 +4,7 @@ from contants import EPacman, EColor, EScore , EAlgorithm, EStatus
 from pacman_agent import Pacman, Target, Wall, Path, DeathPit
 from algorithm import *
 
-class GamePacMan():
+class GamePacman():
     def __init__(self, file_path):
         self.game_board = self.get_maze(file_path)
         self.size = EPacman.SIZE.value

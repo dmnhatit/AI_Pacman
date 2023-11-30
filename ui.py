@@ -41,4 +41,3 @@ class Button(Text):
             py.draw.rect(self.surface, self.background_color, [self.x, self.y, self.width, self.height])
         
         self.surface.blit(self.init_text, self.init_text_rect)
-
