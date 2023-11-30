@@ -14,7 +14,7 @@ class Game():
         self.frame = EGame.FRAME.value
         self.screen = py.display.set_mode((self.width + self.frame*2, self.height + self.frame*2))
         self.game = None
-        self.map = EMap.INIT.value
+        self.map = EMap.MAP_1
 
         py.display.set_caption("Game Pacman")
         py.display.set_icon(load.load_img("images\icon.png"))
@@ -38,6 +38,7 @@ class Game():
         self.text_score = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
         self.text_message = ui.Text(EStatus.PENDING.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
         self.text_algorithm = ui.Text(EAlgorithm.INIT.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
+        self.text_statistics = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
 
         self.algorithm_menu = False
         self.button_algorithm_menu = ui.Button("Choose Algorithm", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
@@ -128,12 +129,16 @@ class Game():
                                 self.algorithm_menu = False
                             
                             elif self.button_map_1.x < mouse[0] < self.button_map_1.x + self.button_map_1.width and self.button_map_1.y < mouse[1] < self.button_map_1.y + self.button_map_1.height:
-                                self.map = EMap.MAP_1.value 
-                                self.game = GamePacman(self.map)
+                                if self.map != EMap.MAP_1:
+                                    self.chart_result.clear_data()
+                                    self.map = EMap.MAP_1 
+                                    self.game = GamePacman(self.map.value)
                                 
                             elif self.button_map_2.x < mouse[0] < self.button_map_2.x + self.button_map_2.width and self.button_map_2.y < mouse[1] < self.button_map_2.y + self.button_map_2.height:
-                                self.map = EMap.MAP_2.value 
-                                self.game = GamePacman(self.map)
+                                if self.map != EMap.MAP_2:
+                                    self.chart_result.clear_data()
+                                    self.map = EMap.MAP_2 
+                                    self.game = GamePacman(self.map.value)
                         else:
                             if self.button_map_menu.x < mouse[0] < self.button_map_menu.x + self.button_map_menu.width and self.button_map_menu.y < mouse[1] < self.button_map_menu.y + self.button_map_menu.height:
                                 self.map_menu = True
@@ -201,7 +206,7 @@ class Game():
         self.button_play.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
 
     def draw_game(self):
-        self.game = GamePacman(self.map) if self.game is None else self.game
+        self.game = GamePacman(self.map.value) if self.game is None else self.game
         self.screen.fill(EColor.BACKGROUND_TYPE1.value)
 
         if self.game.status == EStatus.PENDING.value:
@@ -273,6 +278,9 @@ class Game():
 
     def draw_chart(self):
         self.screen.fill(EColor.BACKGROUND_TYPE1.value)
+
+        self.text_statistics.draw(self.screen, self.width - self.button_width + self.frame, 10)   
+        self.text_statistics.set_text(f"[{self.map.name}]", EColor.TEXT_TITLE.value, self.font)
 
         self.button_reset.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)        
         self.button_reset.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)

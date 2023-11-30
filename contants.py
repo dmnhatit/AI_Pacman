@@ -73,7 +73,6 @@ class EStatus(Enum):
     LOSE = "You Lose"
 
 class EMap(Enum):
-    INIT = "input\map1.txt"
     MAP_1 = "input\map1.txt"
     MAP_2 = "input\map2.txt"
 
