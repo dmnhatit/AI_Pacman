@@ -35,6 +35,9 @@ class EColor(Enum):
     DEATH_PIT = (61, 61, 61)
     BACKGROUND_PACMAN = (0, 0, 0)
     MONITOR = (0, 0, 0)
+    CHART_AXIS = (255, 255, 255)
+    CHART_CAPTION = (255, 255, 255)
+    CHART_COLUMNS = (0, 0, 255)
 
 class EAngle(Enum):
     NONE = 360
@@ -73,3 +76,12 @@ class EMap(Enum):
     INIT = "input\map1.txt"
     MAP_1 = "input\map1.txt"
     MAP_2 = "input\map2.txt"
+
+class EMoniter(Enum):
+    MAIN = "Main"
+    GAME = "Game"
+    CHART = "Chart"
+
+class EChart(Enum):
+    COLUMN_MARGIN = 20
+    COLUMN_SIZE = 30

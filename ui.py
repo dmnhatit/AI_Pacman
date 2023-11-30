@@ -1,4 +1,5 @@
 import pygame as py
+from contants import EColor, EChart
 
 class Text():
     def __init__(self, init_text, color, width, height, font: py.font.FontType, background_color = None, border_color = None):
@@ -41,3 +42,54 @@ class Button(Text):
             py.draw.rect(self.surface, self.background_color, [self.x, self.y, self.width, self.height])
         
         self.surface.blit(self.init_text, self.init_text_rect)
+
+class Chart():
+    def __init__(self, caption, x, y, size, font: py.font.FontType, frame, axis_color = EColor.CHART_AXIS.value, columns_color = EColor.CHART_COLUMNS.value):
+        self.x = x
+        self.y = y
+        self.datas = []
+        self.columns = []
+        self.size = size
+        self.font = font
+        self.caption = Text(caption, EColor.CHART_CAPTION.value, self.size, 40, self.font)
+        self.frame = frame
+        self.axis_color = axis_color
+        self.columns_color = columns_color
+        self.surface =  py.surface.Surface((size, size))
+        self.surface_rect = self.surface.get_rect()
+        self.surface_rect.center = (size//2, size//2)
+    
+    def add_data(self, column_name, data):
+        if column_name in self.columns:
+            index = self.columns.index(column_name)
+            self.datas[index] = data
+        else:
+            self.datas.append(data)
+            self.columns.append(column_name)
+    
+    def clear_data(self):
+        self.datas = []
+        self.columns = []
+    
+    def draw(self):
+        self.surface.fill(EColor.INIT.value)
+
+        column_size = EChart.COLUMN_SIZE.value
+        margin = EChart.COLUMN_MARGIN.value
+        column_index = self.frame + margin
+
+        is_negative = - min(self.datas) + 10 if len(self.datas) > 0 and min(self.datas)<0 else 0
+        value_unit = float((self.size - 10 - self.frame*2)/(max(self.datas)+is_negative)) if len(self.datas) > 0 else 1
+        
+        py.draw.line(self.surface, self.axis_color, (self.frame, self.size - self.frame), (self.size - self.frame, self.size - self.frame), 2)
+        py.draw.line(self.surface, self.axis_color, (self.frame, self.frame), (self.frame, self.size - self.frame), 2)
+
+        for index in range(len(self.datas)):
+            value = self.datas[index]
+            py.draw.rect(self.surface, self.columns_color, (column_index, self.size - self.frame - value*value_unit - is_negative*value_unit, column_size, value*value_unit + is_negative*value_unit))
+            column_name = self.columns[index]
+            label = self.font.render(column_name, True, self.axis_color)
+            self.surface.blit(label, (column_index + column_size//2 - label.get_width()//2, self.size - self.frame + 10))
+            label_value = self.font.render(str(value), True, self.axis_color)
+            self.surface.blit(label_value, (column_index + column_size//2 - label_value.get_width()//2, self.size - self.frame - value*value_unit - 20 - is_negative*value_unit))
+            column_index += (column_size + margin)

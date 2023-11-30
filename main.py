@@ -3,7 +3,7 @@ import pygame as py
 import sys
 import load
 from pacman import GamePacman
-from contants import EGame, EColor, EAlgorithm, EStatus, EMap
+from contants import EGame, EColor, EAlgorithm, EStatus, EMap, EMoniter
 import ui
 
 class Game():
@@ -22,10 +22,13 @@ class Game():
         self.clock = py.time.Clock()
         self.font = py.font.Font(None, EGame.FONT_SIZE.value)
 
+        self.chart_result = ui.Chart("Chart Result", self.frame, self.frame, 600, self.font, 50)
+
         self.button_width = EGame.BUTTON_WIDTH.value
         self.button_height = EGame.BUTTON_HEIGHT.value
 
         self.button_quit = ui.Button("Quit", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_statistics = ui.Button("Statistics", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
         self.button_play = ui.Button("Play", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
         
         self.button_start = ui.Button("Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
@@ -62,7 +65,7 @@ class Game():
 
     def run(self):
         running = True
-        playgame = False
+        moniter = EMoniter.MAIN
         while running:
             mouse = py.mouse.get_pos()
             for event in py.event.get():
@@ -74,11 +77,15 @@ class Game():
                     if self.button_quit.x < mouse[0] < self.button_quit.x + self.button_quit.width and self.button_quit.y < mouse[1] < self.button_quit.y + self.button_quit.height:
                         running = False
 
-                    if playgame == False:
+                    if moniter == EMoniter.MAIN:
                         # Play Game
                         if self.button_play.x < mouse[0] < self.button_play.x + self.button_play.width and self.button_play.y < mouse[1] < self.button_play.y + self.button_play.height:
-                            playgame = True
-                    else:
+                            moniter = EMoniter.GAME
+                        
+                        if self.button_statistics.x < mouse[0] < self.button_statistics.x + self.button_statistics.width and self.button_statistics.y < mouse[1] < self.button_statistics.y + self.button_statistics.height:
+                            moniter = EMoniter.CHART
+
+                    elif moniter == EMoniter.GAME:
                         # Open Algorithm Menu
                         if self.algorithm_menu and self.game.status == EStatus.PENDING.value:
                             if self.button_athgorithm_close.x < mouse[0] < self.button_athgorithm_close.x + self.button_athgorithm_close.width and self.button_athgorithm_close.y < mouse[1] < self.button_athgorithm_close.y + self.button_athgorithm_close.height:
@@ -144,25 +151,39 @@ class Game():
 
                         # Return
                         if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
-                            playgame = False
+                            moniter = EMoniter.MAIN
                             self.game.stop_music()
                             self.game = None
+                    elif moniter == EMoniter.CHART:
+                        if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
+                            moniter = EMoniter.MAIN
+                        
+                        if self.button_reset.x < mouse[0] < self.button_reset.x + self.button_reset.width and self.button_reset.y < mouse[1] < self.button_reset.y + self.button_reset.height:
+                            self.chart_result.clear_data()
+
           
-            if playgame == True and self.game is not None:
-                self.game.events()
+            if self.game is not None:
+                if moniter == EMoniter.GAME:
+                    self.game.events()
+
+                if self.game.get_status() == EStatus.WIN.value:
+                    self.chart_result.add_data(self.game.get_algorithm(), self.game.get_score())
             
-            self.draw(playgame)
+            self.draw(moniter)
             py.display.flip()
             self.clock.tick(10)
 
         py.quit()
         sys.exit()
     
-    def draw(self, playgame):
-        if playgame:
-            self.draw_game()
-        else:
+    def draw(self, moniter: EMoniter):
+        if moniter == EMoniter.MAIN:
             self.draw_main()
+        elif moniter == EMoniter.GAME:
+            self.draw_game()
+        elif moniter == EMoniter.CHART:
+            self.draw_chart()
+        
 
     def draw_main(self):
         self.screen.fill(EColor.BACKGROUND_TYPE1.value)
@@ -172,9 +193,11 @@ class Game():
         
         self.screen.blit(self.background_img, (30, 180))
 
-        self.button_quit.draw(self.screen, 315, 500)
+        self.button_quit.draw(self.screen, 315, 520)
         self.button_quit.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
-        self.button_play.draw(self.screen, 315, 450)
+        self.button_statistics.draw(self.screen, 315, 470)
+        self.button_statistics.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_play.draw(self.screen, 315, 420)
         self.button_play.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
 
     def draw_game(self):
@@ -247,6 +270,20 @@ class Game():
         self.button_map_1.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
         self.button_map_2.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
         self.button_map_2.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+
+    def draw_chart(self):
+        self.screen.fill(EColor.BACKGROUND_TYPE1.value)
+
+        self.button_reset.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)        
+        self.button_reset.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_return.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*2)        
+        self.button_return.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
+        self.button_quit.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height + self.frame)
+        self.button_quit.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
+
+        self.chart_result.draw()
+        self.screen.blit(self.chart_result.surface, (self.frame, self.frame))
+
 
 if __name__ == "__main__":
     game = Game()
