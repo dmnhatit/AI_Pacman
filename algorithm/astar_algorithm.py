@@ -1,4 +1,3 @@
-#%%
 import math
 
 class Node():
@@ -7,7 +6,7 @@ class Node():
         self.position = position
 
         self.g = 0 # PATH-COST to the node
-        self.h = 0 # heuristic to the goal: straight-line distance hueristic
+        self.h = 0 # heuristic to the goal
         self.f = 0 # evaluation function f(n) = g(n) + h(n)
     
     def get_path(self):
@@ -37,30 +36,27 @@ class Node():
     def __eq__(self, other):
         return self.position == other.position
 
-class Problem:
-    def __init__(self, maze, initial_state, goal_state):
-        self.maze = maze
-        self.initial_state = initial_state
-        self.goal_state = goal_state
-
-    def goal_test(self, state):
-        return state == self.goal_state
-
-    def get_successors(self, state):
-        successors = [
-            (state[0] + dx, state[1] + dy)
-            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        ]
-        successors = [
-            (x, y)
-            for x, y in successors
-            if 0 <= x < len(self.maze)
-            and 0 <= y < len(self.maze[0])
-            and self.maze[x][y] != 0
-        ]
-        return successors
-
-def astar(problem)-> Node or None:
+def heuristic(child, start_node, end_node, name_heuristic):
+    dx=abs(child.position[0] - end_node.position[0])
+    dy=abs(child.position[1] - end_node.position[1])
+    dx_start_end=abs(start_node.position[0] - end_node.position[0])
+    dy_start_end=abs(start_node.position[1] - end_node.position[1])
+    dx_start_current=abs(start_node.position[0] - child.position[0])
+    dy_start_current=abs(start_node.position[1] - child.position[1])
+    a=math.sqrt((dx ** 2) + (dy ** 2))
+    b=math.sqrt((dx_start_end ** 2) + (dy_start_end ** 2))
+    c=math.sqrt((dx_start_current ** 2) + (dy_start_current ** 2))
+    cos = abs(((b**2 + c**2 - a**2) / (2 * b * c)))
+    if (name_heuristic=="euclidean"):
+        return math.sqrt((dx ** 2) + (dy ** 2))
+    if (name_heuristic=="manhattan"):
+        return dx+dy
+    if (name_heuristic=="euclidean_no_square"):
+        return (dx ** 2) + (dy ** 2)
+    if (name_heuristic=="angle_euclide"):
+        return (dx+dy) - cos
+    
+def astar(problem, name_heuristic):
     maze=problem.maze
     # Create start and end node
     start_node = Node(None, problem.initial_state)
@@ -92,14 +88,7 @@ def astar(problem)-> Node or None:
 
         # Check if we found the goal
         if current_node == end_node:
-            return current_node
-            # path = []
-            # current = current_node
-            # while current is not None:
-            #     path.append(current.position)
-            #     current = current.parent
-            # return path[::-1] # Return reversed path
-
+            return current_node, len(closed_list)
         # Expansion: Generate children
         children = []
         for new_position in [(-1, 0), (0, 1), (1, 0), (0, -1)]: # Adjacent squares
@@ -137,7 +126,7 @@ def astar(problem)-> Node or None:
 
             # Create the f, g, and h values
             child.g = current_node.g + 1
-            child.h = math.sqrt(((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2))
+            child.h = heuristic(child, start_node, end_node, name_heuristic)
             child.f = child.g + child.h
 
             # Child is already in the open list
@@ -152,40 +141,18 @@ def astar(problem)-> Node or None:
             if not is_opened_child:
                 open_list.append(child)
 
-if __name__ == '__main__':
-    maze = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],   # 0: obstacle position
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 2, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
+def astar_euclidean(problem):
+    return astar(problem,"euclidean")
 
-    problem = Problem(maze, (1, 1), (16, 22))
-    node_astar = astar(problem)
+def astar_euclidean_no_square(problem):
+    return astar(problem,"euclidean_no_square")
 
-    if node_astar is not None:
-        print(node_astar.get_directions())
-    else:
-        print("No solution")
+def astar_manhattan(problem):
+    return astar(problem,"manhattan")
 
-# %%
+def astar_angle_euclide(problem):
+    return astar(problem,"angle_euclide")
+
+'''
+Tài liệu tham khảo: Code tham khảo bài tập tuần 8 của thầy Trần Nhật Quang
+'''

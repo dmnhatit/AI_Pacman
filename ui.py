@@ -76,7 +76,7 @@ class Chart():
 
         column_size = EChart.COLUMN_SIZE.value
         margin = EChart.COLUMN_MARGIN.value
-        column_index = self.frame + margin
+        column_index = self.frame + 10
 
         is_negative = - min(self.datas) + 10 if len(self.datas) > 0 and min(self.datas)<0 else 0
         value_unit = float((self.size - 10 - self.frame*2)/(max(self.datas)+is_negative)) if len(self.datas) > 0 else 1

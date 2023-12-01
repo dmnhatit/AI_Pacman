@@ -18,7 +18,8 @@ class GamePacman():
         self.death_pits = []
         self.score = 0
         self.status = EStatus.PENDING.value
-        self.algorithm = EAlgorithm.INIT.value
+        self.algorithm = EAlgorithm.INIT
+        self.iterations = None
         
         self.commands = []
         self.path_result = []
@@ -44,8 +45,8 @@ class GamePacman():
     def set_start(self, is_start):
         self.start = is_start
   
-    def display_score(self):
-        pass
+    def get_iterations(self):
+        return self.iterations
 
     def win_game(self):
         self.win = True
@@ -95,7 +96,7 @@ class GamePacman():
         if self.colliderect_target(self.hero.position_future):
             self.hero.move_to_location()
             self.win_game()
-        elif self.algorithm ==  EAlgorithm.UCS.value and self.colliderect_death_pit(self.hero.position_future):
+        elif self.colliderect_death_pit(self.hero.position_future):
             self.hero.move_to_location()
         else:
             if not self.colliderect_wall(self.hero.position_future):
@@ -144,11 +145,10 @@ class GamePacman():
             self.hero.mounth_event()
             self.screen.blit(self.hero.get_surface(), (self.hero.get_x()*self.hero.get_size(), self.hero.get_y()*self.hero.get_size()))
         
-        if self.algorithm == EAlgorithm.UCS.value:
-            if len(self.death_pits) > 0:
-                for item in self.death_pits:
-                    item.draw()
-                    self.screen.blit(item.get_surface(), item.get_surface_rect())
+        if len(self.death_pits) > 0:
+            for item in self.death_pits:
+                item.draw()
+                self.screen.blit(item.get_surface(), item.get_surface_rect())
 
         if len(self.path_result) > 0:
             for index in self.path_result:
@@ -177,6 +177,7 @@ class GamePacman():
         return load.load_maze(file_path)
     
     def get_result(self, algorithm):
+        iterations = None
         result = Node()
         problem = Problem(self.game_board, (self.hero.y, self.hero.x), (self.target.y, self.target.x))
         if algorithm == EAlgorithm.BFS:
@@ -187,13 +188,20 @@ class GamePacman():
             result = dfs(problem)
         elif algorithm == EAlgorithm.IDS:
             result = ids(problem)
-        elif algorithm == EAlgorithm.ASTAR:
-            result = astar(problem)
+        elif algorithm == EAlgorithm.AS_E:
+            result, iterations = astar_euclidean(problem)
+        elif algorithm == EAlgorithm.AS_ENQ:
+            result, iterations = astar_euclidean_no_square(problem)
+        elif algorithm == EAlgorithm.AS_M:
+            result, iterations = astar_manhattan(problem)
+        elif algorithm == EAlgorithm.AS_AE:
+            result, iterations = astar_angle_euclide(problem)
 
         self.commands = result.get_directions() if result is not None else []
         if self.commands is not None:
             self.status = EStatus.READY.value
-            self.algorithm = algorithm.value
+            self.algorithm = algorithm
+            self.iterations = iterations
 
     
     def play_music(self):

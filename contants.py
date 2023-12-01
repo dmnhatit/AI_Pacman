@@ -63,7 +63,10 @@ class EAlgorithm(Enum):
     UCS = "UCS" 
     DFS = "DFS"
     IDS = "IDS"
-    ASTAR = "A Start"
+    AS_E = "Euclidean"
+    AS_ENQ = "E - No Square"
+    AS_M = "Manhattan"
+    AS_AE = "Angle Euclide"
 
 class EStatus(Enum):
     PENDING = "Pending"
@@ -82,5 +85,5 @@ class EMoniter(Enum):
     CHART = "Chart"
 
 class EChart(Enum):
-    COLUMN_MARGIN = 20
-    COLUMN_SIZE = 30
+    COLUMN_MARGIN = 30
+    COLUMN_SIZE = 35

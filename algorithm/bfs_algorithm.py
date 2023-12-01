@@ -1,7 +1,5 @@
-#%%
 from collections import deque
 import heapq
-
 
 class Node:
     def __init__(self, state, parent=None, cost=0):
@@ -38,30 +36,6 @@ class Node:
             elif dy == -1:
                 directions.append("LEFT")
         return directions
-
-
-class Problem:
-    def __init__(self, maze, initial_state, goal_state):
-        self.maze = maze
-        self.initial_state = initial_state
-        self.goal_state = goal_state
-
-    def goal_test(self, state):
-        return state == self.goal_state
-
-    def get_successors(self, state):
-        successors = [
-            (state[0] + dx, state[1] + dy)
-            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        ]
-        successors = [
-            (x, y)
-            for x, y in successors
-            if 0 <= x < len(self.maze)
-            and 0 <= y < len(self.maze[0])
-            and self.maze[x][y] != 0
-        ]
-        return successors
 
 
 class PriorityQueue:
@@ -153,65 +127,3 @@ def ucs(problem):
             ):
                 frontier.put(child_node, child_node.cost)
     return None
-
-
-if __name__ == "__main__":
-    # maze = [
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 1, 0, 0, 0, 1, 1, 1, 1, 0],  # 1: obstacle position
-    #     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    # ]
-
-    maze = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],   # 0: obstacle position
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 2, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
-    problem = Problem(maze, (1, 1), (16, 22))
-    node_bfs = bfs(problem)
-    node_ucs = ucs(problem)
-    if node_bfs is not None:
-        print(node_bfs.get_directions())
-        print(node_bfs.cost)
-    else:
-        print("No solution")
-
-    if node_ucs is not None:
-        print(node_ucs.get_directions())
-        print(node_ucs.cost)
-    else:
-        print("No solution")
-
-    if node_ucs is not None and node_bfs is not None:
-        if node_bfs.get_directions() == node_ucs.get_directions():
-            print("same")
-# %%

@@ -38,22 +38,24 @@ class Game():
         self.text_score = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
         self.text_message = ui.Text(EStatus.PENDING.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
         self.text_algorithm = ui.Text(EAlgorithm.INIT.value, EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
+        self.text_iterations = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
         self.text_statistics = ui.Text("", EColor.TEXT_TITLE.value, self.button_width, self.button_height, self.font, EColor.MONITOR.value)
 
         self.algorithm_menu = False
         self.button_algorithm_menu = ui.Button("Choose Algorithm", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_BFS_athgorithm = ui.Button("BFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_UCS_athgorithm = ui.Button("UCS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_DFS_athgorithm = ui.Button("DFS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_IDS_athgorithm = ui.Button("IDS", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_BFS_athgorithm = ui.Button(EAlgorithm.BFS.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_UCS_athgorithm = ui.Button(EAlgorithm.UCS.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_DFS_athgorithm = ui.Button(EAlgorithm.DFS.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_IDS_athgorithm = ui.Button(EAlgorithm.IDS.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
         self.button_athgorithm_close = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
 
         self.astart_menu = False      
         self.button_astart_menu = ui.Button("Choose A Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
 
-        self.button_A_StartA_athgorithm = ui.Button("A Start (A)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_A_StartB_athgorithm = ui.Button("A Start (B)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
-        self.button_A_StartC_athgorithm = ui.Button("A Start (C)", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_euclidean_athgorithm = ui.Button(EAlgorithm.AS_E.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_euclidean_nq_athgorithm = ui.Button(EAlgorithm.AS_ENQ.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_manhattan_athgorithm = ui.Button(EAlgorithm.AS_M.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_angle_euclide_athgorithm = ui.Button(EAlgorithm.AS_AE.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
         self.button_astar_close = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
 
         self.map_menu = False
@@ -116,6 +118,14 @@ class Game():
                                 self.astart_menu = False
                                 self.map_menu = False
                                 self.algorithm_menu = False
+                            if self.button_euclidean_athgorithm.x < mouse[0] < self.button_euclidean_athgorithm.x + self.button_euclidean_athgorithm.width and self.button_euclidean_athgorithm.y < mouse[1] < self.button_euclidean_athgorithm.y + self.button_euclidean_athgorithm.height:
+                                self.game.get_result(EAlgorithm.AS_E)
+                            if self.button_euclidean_nq_athgorithm.x < mouse[0] < self.button_euclidean_nq_athgorithm.x + self.button_euclidean_nq_athgorithm.width and self.button_euclidean_nq_athgorithm.y < mouse[1] < self.button_euclidean_nq_athgorithm.y + self.button_euclidean_nq_athgorithm.height:
+                                self.game.get_result(EAlgorithm.AS_ENQ)
+                            if self.button_manhattan_athgorithm.x < mouse[0] < self.button_manhattan_athgorithm.x + self.button_manhattan_athgorithm.width and self.button_manhattan_athgorithm.y < mouse[1] < self.button_manhattan_athgorithm.y + self.button_manhattan_athgorithm.height:
+                                self.game.get_result(EAlgorithm.AS_M)
+                            if self.button_angle_euclide_athgorithm.x < mouse[0] < self.button_angle_euclide_athgorithm.x + self.button_angle_euclide_athgorithm.width and self.button_angle_euclide_athgorithm.y < mouse[1] < self.button_angle_euclide_athgorithm.y + self.button_angle_euclide_athgorithm.height:
+                                self.game.get_result(EAlgorithm.AS_AE)
                         else:
                             if self.button_astart_menu.x < mouse[0] < self.button_astart_menu.x + self.button_astart_menu.width and self.button_astart_menu.y < mouse[1] < self.button_astart_menu.y + self.button_astart_menu.height:
                                 self.astart_menu = True
@@ -159,20 +169,20 @@ class Game():
                             moniter = EMoniter.MAIN
                             self.game.stop_music()
                             self.game = None
+
                     elif moniter == EMoniter.CHART:
                         if self.button_return.x < mouse[0] < self.button_return.x + self.button_return.width and self.button_return.y < mouse[1] < self.button_return.y + self.button_return.height:
                             moniter = EMoniter.MAIN
                         
                         if self.button_reset.x < mouse[0] < self.button_reset.x + self.button_reset.width and self.button_reset.y < mouse[1] < self.button_reset.y + self.button_reset.height:
                             self.chart_result.clear_data()
-
           
             if self.game is not None:
                 if moniter == EMoniter.GAME:
                     self.game.events()
 
                 if self.game.get_status() == EStatus.WIN.value:
-                    self.chart_result.add_data(self.game.get_algorithm(), self.game.get_score())
+                    self.chart_result.add_data(self.game.get_algorithm().name, self.game.get_score())
             
             self.draw(moniter)
             py.display.flip()
@@ -189,7 +199,6 @@ class Game():
         elif moniter == EMoniter.CHART:
             self.draw_chart()
         
-
     def draw_main(self):
         self.screen.fill(EColor.BACKGROUND_TYPE1.value)
         py.draw.rect(self.screen, EColor.BACKGROUND_TYPE3.value, [15-4, 150-4, EGame.COVER_WIDTH.value + 30 + 4, EGame.COVER_HEIGHT.value + 60 + 4])
@@ -232,14 +241,18 @@ class Game():
         self.button_quit.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height + self.frame)
         self.button_quit.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
 
-        self.text_message.draw(self.screen, self.width - self.button_width + self.frame, 90)   
+        self.text_message.draw(self.screen, self.width - self.button_width + self.frame, 10)   
         self.text_message.set_text(f"[{self.game.get_status()}]", EColor.TEXT_TITLE.value, self.font)
         
-        self.text_score.draw(self.screen, self.width - self.button_width + self.frame, 50)   
+        self.text_algorithm.draw(self.screen, self.width - self.button_width + self.frame, 50)   
+        self.text_algorithm.set_text(f"[{self.game.get_algorithm().value}]", EColor.TEXT_TITLE.value, self.font)
+
+        self.text_score.draw(self.screen, self.width - self.button_width + self.frame, 90)   
         self.text_score.set_text(f"[Score: {self.game.get_score()}]", EColor.TEXT_TITLE.value, self.font)
 
-        self.text_algorithm.draw(self.screen, self.width - self.button_width + self.frame, 10)   
-        self.text_algorithm.set_text(f"[{self.game.get_algorithm()}]", EColor.TEXT_TITLE.value, self.font)
+        if self.game.get_iterations() is not None:
+            self.text_iterations.draw(self.screen, self.width - self.button_width + self.frame, 130)   
+            self.text_iterations.set_text(f"[Iterations: {self.game.get_iterations()}]", EColor.TEXT_TITLE.value, self.font)
 
         self.game.draw()
         self.screen.blit(self.game.get_screen(),(self.frame,self.frame))
@@ -261,12 +274,14 @@ class Game():
     def draw_astar_menu(self):
         self.button_astar_close.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)
         self.button_astar_close.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_2.value)
-        self.button_A_StartA_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)
-        self.button_A_StartA_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
-        self.button_A_StartB_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
-        self.button_A_StartB_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
-        self.button_A_StartC_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
-        self.button_A_StartC_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_euclidean_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*4 - self.frame*2)
+        self.button_euclidean_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_euclidean_nq_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*5 - self.frame*3)
+        self.button_euclidean_nq_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_manhattan_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*6 - self.frame*4)
+        self.button_manhattan_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
+        self.button_angle_euclide_athgorithm.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*7 - self.frame*5)
+        self.button_angle_euclide_athgorithm.button_hover_change_color(EColor.BUTTON_HOVER_TYPE_1.value)
     
     def draw_map_menu(self):
         self.button_close_map.draw(self.screen, self.width - self.button_width + self.frame, self.height - self.button_height*3 - self.frame)
@@ -291,7 +306,6 @@ class Game():
 
         self.chart_result.draw()
         self.screen.blit(self.chart_result.surface, (self.frame, self.frame))
-
 
 if __name__ == "__main__":
     game = Game()

@@ -1,6 +1,3 @@
-#%%
-
-from collections import deque
 class Node:
     def __init__(self, state, parent=None, cost=0):
         self.state = state
@@ -37,31 +34,6 @@ class Node:
                 directions.append("LEFT")
         return directions
 
-
-class Problem:
-    def __init__(self, maze, initial_state, goal_state):
-        self.maze = maze
-        self.initial_state = initial_state
-        self.goal_state = goal_state
-
-    def goal_test(self, state):
-        return state == self.goal_state
-
-    def get_successors(self, state):
-        successors = [
-            (state[0] + dx, state[1] + dy)
-            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        ]
-        successors = [
-            (x, y)
-            for x, y in successors
-            if 0 <= x < len(self.maze)
-            and 0 <= y < len(self.maze[0])
-            and self.maze[x][y] != 0
-        ]
-        return successors
-
-
 def dfs(problem):
     start_node = Node(problem.initial_state)
     if problem.goal_test(start_node.state):
@@ -90,10 +62,8 @@ def ids(problem):
         depth += 1
         visited = []
 
-
 def dls(problem, limit, visited=[]):
     return recursive_dls(Node(problem.initial_state), problem, limit, visited)
-
 
 def recursive_dls(node, problem, limit, visited):
     visited.append(node)
@@ -125,57 +95,3 @@ def in_but_better(visited, node):
             visited.remove(visited_node)
             return True
     return False
-
-
-if __name__ == "__main__":
-    maze = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],   # 0: obstacle position
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 2, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
-
-    # problem = Problem(maze2, (0, 0), (8, 9))
-    problem = Problem(maze, (1, 1), (16, 21))
-    node_ids = ids(problem)
-    node_dfs = dfs(problem)
-    
-    if node_ids is not None:
-        print(node_ids.get_directions())
-        print(node_ids.cost)
-    else:
-        print("no solution")
-
-    node_dfs = dfs(problem)
-    if node_dfs is not None:
-        print(node_dfs.get_directions())
-        print(node_dfs.cost)
-    else:
-        print("No solution")
-
-    if node_ids is not None and node_dfs is not None:
-        if node_dfs.get_directions() == node_ids.get_directions():
-            print("same")
-
-# %%
