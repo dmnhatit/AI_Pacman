@@ -53,7 +53,7 @@ class EPosition(Enum):
     DOWN = (0, 1)
 
 class EScore(Enum):
-    TARGET = 500
+    TARGET = 600
     STEP = -5
     DEATH_PIT = -200
 
