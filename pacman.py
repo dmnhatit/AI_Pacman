@@ -195,7 +195,7 @@ class GamePacman():
         elif algorithm == EAlgorithm.AS_M:
             result, iterations = astar_manhattan(problem)
         elif algorithm == EAlgorithm.AS_AE:
-            result, iterations = astar_angle_euclide(problem)
+            result, iterations = astar_angle_euclidean(problem)
 
         self.commands = result.get_directions() if result is not None else []
         if self.commands is not None:

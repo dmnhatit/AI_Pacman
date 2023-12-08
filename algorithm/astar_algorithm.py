@@ -16,6 +16,9 @@ class Node():
             path.append(current.position)
             current = current.parent
         return path[::-1]
+    
+    def path_cost(self):
+        return self.g
 
     def get_directions(self):
         path = self.get_path()
@@ -36,13 +39,13 @@ class Node():
     def __eq__(self, other):
         return self.position == other.position
 
-def heuristic(child, start_node, end_node, name_heuristic):
-    dx=abs(child.position[0] - end_node.position[0])
-    dy=abs(child.position[1] - end_node.position[1])
+def heuristic(node, start_node, end_node, name_heuristic):
+    dx=abs(node.position[0] - end_node.position[0])
+    dy=abs(node.position[1] - end_node.position[1])
     dx_start_end=abs(start_node.position[0] - end_node.position[0])
     dy_start_end=abs(start_node.position[1] - end_node.position[1])
-    dx_start_current=abs(start_node.position[0] - child.position[0])
-    dy_start_current=abs(start_node.position[1] - child.position[1])
+    dx_start_current=abs(start_node.position[0] - node.position[0])
+    dy_start_current=abs(start_node.position[1] - node.position[1])
     a=math.sqrt((dx ** 2) + (dy ** 2))
     b=math.sqrt((dx_start_end ** 2) + (dy_start_end ** 2))
     c=math.sqrt((dx_start_current ** 2) + (dy_start_current ** 2))
@@ -53,7 +56,7 @@ def heuristic(child, start_node, end_node, name_heuristic):
         return dx+dy
     if (name_heuristic=="euclidean_no_square"):
         return (dx ** 2) + (dy ** 2)
-    if (name_heuristic=="angle_euclide"):
+    if (name_heuristic=="angle_euclidean"):
         return (dx+dy) - cos
     
 def astar(problem, name_heuristic):
@@ -126,6 +129,9 @@ def astar(problem, name_heuristic):
 
             # Create the f, g, and h values
             child.g = current_node.g + 1
+            # Update for cost
+            if maze[child.position[0]][child.position[1]] == 5:
+                child.g = current_node.g + 40      
             child.h = heuristic(child, start_node, end_node, name_heuristic)
             child.f = child.g + child.h
 
@@ -150,8 +156,41 @@ def astar_euclidean_no_square(problem):
 def astar_manhattan(problem):
     return astar(problem,"manhattan")
 
-def astar_angle_euclide(problem):
-    return astar(problem,"angle_euclide")
+def astar_angle_euclidean(problem):
+    return astar(problem,"angle_euclidean")
+
+if __name__ == '__main__':
+    maze =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 3, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+                [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0],
+                [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0],
+                [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0],
+                [0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0],
+                [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 5, 1, 0, 0, 0, 0, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0],
+                [0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 1, 1, 1, 0, 1, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0],
+                [0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+    problem = Problem(maze, (1, 1), (19, 16))
+
+    result, count_closed_node = astar_angle_euclidean(problem)
+
+    print(result.get_directions())
+    print(count_closed_node)
 
 '''
 Tài liệu tham khảo: Code tham khảo bài tập tuần 8 của thầy Trần Nhật Quang

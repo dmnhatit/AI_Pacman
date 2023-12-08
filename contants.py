@@ -53,7 +53,7 @@ class EPosition(Enum):
     DOWN = (0, 1)
 
 class EScore(Enum):
-    TARGET = 500
+    TARGET = 600
     STEP = -5
     DEATH_PIT = -200
 
@@ -66,7 +66,7 @@ class EAlgorithm(Enum):
     AS_E = "Euclidean"
     AS_ENQ = "E - No Square"
     AS_M = "Manhattan"
-    AS_AE = "Angle Euclide"
+    AS_AE = "Angle Euclidean"
 
 class EStatus(Enum):
     PENDING = "Pending"

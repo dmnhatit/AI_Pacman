@@ -50,7 +50,7 @@ class Game():
         self.button_athgorithm_close = ui.Button("Close Menu", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
 
         self.astart_menu = False      
-        self.button_astart_menu = ui.Button("Choose A Start", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
+        self.button_astart_menu = ui.Button("Choose A Star", EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
 
         self.button_euclidean_athgorithm = ui.Button(EAlgorithm.AS_E.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
         self.button_euclidean_nq_athgorithm = ui.Button(EAlgorithm.AS_ENQ.value, EColor.BUTTON_TITLE.value, self.button_width, self.button_height, self.font, EColor.BUTTON.value, EColor.INIT.value)
@@ -252,7 +252,7 @@ class Game():
 
         if self.game.get_iterations() is not None:
             self.text_iterations.draw(self.screen, self.width - self.button_width + self.frame, 130)   
-            self.text_iterations.set_text(f"[Iterations: {self.game.get_iterations()}]", EColor.TEXT_TITLE.value, self.font)
+            self.text_iterations.set_text(f"[Closed Node: {self.game.get_iterations()}]", EColor.TEXT_TITLE.value, self.font)
 
         self.game.draw()
         self.screen.blit(self.game.get_screen(),(self.frame,self.frame))
